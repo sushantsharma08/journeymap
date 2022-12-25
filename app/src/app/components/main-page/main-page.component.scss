@@ -1,0 +1,23 @@
+.head{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+}
+.heading{
+    font-size: xx-large;
+    margin: 15px;
+}
+#map {
+    height: 400px;
+    width: 700px;
+    border: 1px solid red;
+}
+.main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+}
+  
