@@ -4,18 +4,31 @@
 <section class="screen">
     <div class="head">
         <span class="heading">Angular Map-Box</span>
-        <div>This project lets the user know when they are close to their destination</div>
+        <div>This project lets the user know the distance between them and their destination</div>
     </div>
     <div class="main">
         <div id='map' class="map-container"></div>
         <div id="distance" class="distance-container"></div>
     </div>
     <div class="foot">
-        <div>
-            <button (click)="addMarker()">add marker</button>
-            <button (click)="viewDist()">view distance</button>
+        <div class="howTo">
+            <span><h3>How to Use</h3></span>
+            <div> 
+                <ul>
+                    <li> click on the GeoLocate icon in the tools</li>
+                    <li>Move to your Desired location on map and then click on "Add Marker"</li>
+                    <li>Then click on the "View Distance" button to see the distance between you and your destination/li>
+                </ul>
+            </div>
         </div>
-        <div>{{loc}}</div>
+        <div class="buttons">
+            <button (click)="addMarker()">Add Marker</button>
+            <button (click)="viewDist()">View Distance</button>
+        </div>
+    </div>
+    <div><span>Marker Coordinates :</span>[{{loc}}]</div>
+    <div class="dist" *ngIf="distance">
+        <span style="display: flex; align-items: baseline;"><h1>Distance:</h1>{{distance}}Km</span>
     </div>
 </section>
 

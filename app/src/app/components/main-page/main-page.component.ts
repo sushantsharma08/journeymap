@@ -2,6 +2,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl'
 import * as turf from '@turf/turf';
+import { NavigationControl } from 'mapbox-gl';
 import { environment } from 'src/environments/environment';
 import { from } from 'rxjs';
 
@@ -11,7 +12,6 @@ import { from } from 'rxjs';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-  center: mapboxgl.GeolocateControl | undefined
   loc: object | undefined;
   map: mapboxgl.Map | undefined;
   style = 'mapbox://styles/mapbox/streets-v12';
@@ -31,7 +31,8 @@ export class MainPageComponent implements OnInit {
   }
 
   to = [];
-  from = [0,0];
+  from:any = [];
+  distance=0;
 
   buildMap() {
 
@@ -50,25 +51,42 @@ export class MainPageComponent implements OnInit {
     });
 
     this.map.addControl(navControl, 'top-right');
-    this.map.addControl(this.center = new mapboxgl.GeolocateControl({
+
+    const geolocate = new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true
       },
       trackUserLocation: true,
-      showUserHeading: true
-    }))
-    console.log(mapboxgl.GeolocateControl);
+      showUserHeading: true,
+    } )
+    
+    this.map.addControl(geolocate);
 
-    // const geocoder = new mapboxgl.MapboxGeocoder({
-    //   accessToken: mapboxgl.accessToken,
-    //   mapboxgl: mapboxgl
-    //   });
-
+    console.log(geolocate);
+    
+    const success = (pos: { coords: any; }) => {
+      const crd = pos.coords;
+    
+      console.log('Your current position is:');
+      console.log(`Latitude : ${crd.latitude}`);
+      console.log(`Longitude: ${crd.longitude}`);
+      console.log(`More or less ${crd.accuracy} meters.`);
+      this.from.length=0;
+      this.from=[crd.longitude,crd.latitude]
+      console.log(this.from);
+      
+    }
+    
+    function error(err: { code: any; message: any; }) {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+    
+    navigator.geolocation.getCurrentPosition(success, error);
   }
 
 
   addMarker(this: any) {
-    this.map.on('mousemove', (e: { lngLat: { toArray: () => any; }; }) => {
+    this.map.on('mousemove', (e: { lngLat: { toArray: () => any; }; })=>{
       this.loc = e.lngLat.toArray();
       // console.log(this.loc);
 
@@ -76,18 +94,16 @@ export class MainPageComponent implements OnInit {
     this.map.once('click', (e: { lngLat: { toArray: () => any; }; }) => {
       const marker = new mapboxgl.Marker({
         color: "red",
-        draggable: true
+        draggable: false
       })
         .setLngLat(this.loc)
         .addTo(this.map);
+      this.to = this.loc;
       console.log(this.loc);
-      this.to=this.loc;
     })
-    console.log(this.to);
-    console.log(this.from);
-    
+
   }
-  
+
 
 
   viewDist(this: any) {
@@ -97,19 +113,21 @@ export class MainPageComponent implements OnInit {
     })
       .setLngLat(this.to) // marker position using variable 'to'
       .addTo(this.map); //add marker to map
-  
+
     var purpleMarker = new mapboxgl.Marker({
       color: 'purple'
     })
       .setLngLat(this.from) // marker position using variable 'from'
       .addTo(this.map); //add marker to map
-  
+
     // units can be degrees, radians, miles, or kilometers, just be sure to change the units in the text box to match. 
-  
-    var distance = turf.distance(this.to, this.from, {
+
+    this.distance = turf.distance(this.to, this.from, {
       units: 'kilometers'
     });
-    console.log(distance);
+    console.log(this.to);
+    console.log(this.from);
+    console.log(this.distance);
   }
 
 }
