@@ -22,14 +22,16 @@
                 </ul>
             </div>
         </div>
-        <div class="buttons" style="display: flex; justify-content: center;">
+        <div class="buttons" style="display: flex; justify-content: space-evenly;">
             <button (click)="addMarker()">Add Marker</button>
             <button (click)="viewDist()">View Distance</button>
+            <button (click)="testLocUpdate()">Track me</button>
         </div>
     </div>
     <div><span>Marker Coordinates : </span> [{{loc}}]</div>
     <div class="dist" *ngIf="distance">
         <span style="display: flex; align-items: baseline;"><h1>Distance:</h1>{{distance}}Km</span>
+        <span style="display: flex; align-items: baseline;"><h1>Distance Travelled:</h1>{{distanceTraveled}}Km</span>
     </div>
 </section>
 

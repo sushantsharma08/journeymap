@@ -4,7 +4,6 @@ import * as mapboxgl from 'mapbox-gl'
 import * as turf from '@turf/turf';
 import { NavigationControl } from 'mapbox-gl';
 import { environment } from 'src/environments/environment';
-import { from } from 'rxjs';
 
 @Component({
   selector: 'app-main-page',
@@ -21,6 +20,7 @@ export class MainPageComponent implements OnInit {
   options = {
     units: 'miles'
   };
+  distanceTraveled = 0;
 
   constructor() {
     (mapboxgl as any).accessToken = environment.mapbox.accessToken;
@@ -31,15 +31,34 @@ export class MainPageComponent implements OnInit {
   }
 
   to = [];
-  from:any = [];
-  distance=0;
+  from: any = [];
+  updatearr: any = [];
+  distance = 0;
 
   buildMap() {
+
+
 
 
     const navControl = new mapboxgl.NavigationControl({
       visualizePitch: true
     });
+    const success = (pos: { coords: any; }) => {
+      const crd = pos.coords;
+
+      // console.log('Your current position is:');
+      // console.log(`Latitude : ${crd.latitude}`);
+      // console.log(`Longitude: ${crd.longitude}`);
+      // console.log(`More or less ${crd.accuracy} meters.`);
+      this.from.length = 0;
+      this.from = [crd.longitude, crd.latitude]
+      console.log(this.from);
+
+    }
+
+    function error(err: { code: any; message: any; }) {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
 
 
     this.map = new mapboxgl.Map({
@@ -58,35 +77,42 @@ export class MainPageComponent implements OnInit {
       },
       trackUserLocation: true,
       showUserHeading: true,
-    } )
-    
+    })
     this.map.addControl(geolocate);
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
 
-    console.log(geolocate);
-    
+  testLocUpdate() {
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
-    
       console.log('Your current position is:');
       console.log(`Latitude : ${crd.latitude}`);
       console.log(`Longitude: ${crd.longitude}`);
       console.log(`More or less ${crd.accuracy} meters.`);
-      this.from.length=0;
-      this.from=[crd.longitude,crd.latitude]
-      console.log(this.from);
-      
+      this.updatearr = [crd.longitude, crd.latitude]
+      console.log(this.updatearr);
+      console.log(typeof this.updatearr);
     }
-    
+
     function error(err: { code: any; message: any; }) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
+
+    setInterval(() => {
+      navigator.geolocation.getCurrentPosition(success, error);
+      this.distanceTraveled = turf.distance(this.from, this.updatearr, {
+        units: 'kilometers'
+      });
+      console.log(this.distanceTraveled);
+      
+    }, 500)
+
+    console.log(`chalra hai`);
     
-    navigator.geolocation.getCurrentPosition(success, error);
   }
 
-
   addMarker(this: any) {
-    this.map.on('mousemove', (e: { lngLat: { toArray: () => any; }; })=>{
+    this.map.on('mousemove', (e: { lngLat: { toArray: () => any; }; }) => {
       this.loc = e.lngLat.toArray();
       // console.log(this.loc);
 
@@ -101,7 +127,6 @@ export class MainPageComponent implements OnInit {
       this.to = this.loc;
       console.log(this.loc);
     })
-
   }
 
 
