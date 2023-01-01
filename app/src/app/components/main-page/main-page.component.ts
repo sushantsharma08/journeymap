@@ -22,6 +22,8 @@ export class MainPageComponent implements OnInit {
     units: 'miles'
   };
   distanceTraveled = 0;
+   initial: any ;
+   updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point = [];
 
   constructor() {
     (mapboxgl as any).accessToken = environment.mapbox.accessToken;
@@ -77,34 +79,36 @@ export class MainPageComponent implements OnInit {
     })
     this.map.addControl(geolocate);
 
-    navigator.geolocation.getCurrentPosition(success, error);
+    navigator.geolocation.getCurrentPosition(success, error)
+    // geolocate.on('geolocate',()=>{
+    //   console.log(`geolocate clicked`);
 
 
+    // })
   }
 
   testLocUpdate() {
-    let initial = this.from;
-    let updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point=[];
 
-    console.log(initial);
+    this.initial=this.from;
+    console.log(this.initial);
+
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
-      updatearr = [crd.longitude, crd.latitude];
-      console.log(updatearr);
-      console.log(typeof updatearr);
-
+      this.updatearr = [crd.longitude, crd.latitude];
+      console.log(typeof this.updatearr);
     }
+
     function error(err: { code: any; message: any; }) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
 
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
-      this.distanceTraveled += turf.distance(initial, updatearr, {
+      this.distanceTraveled = turf.distance(this.initial, this.updatearr, {
         units: 'kilometers'
       });
-      initial = updatearr;
-      console.log(initial);
+      console.log(this.updatearr);
+      console.log(this.initial);
       console.log(this.distanceTraveled);
     }, 500)
   }
