@@ -4,6 +4,7 @@ import * as mapboxgl from 'mapbox-gl'
 import * as turf from '@turf/turf';
 import { NavigationControl } from 'mapbox-gl';
 import { environment } from 'src/environments/environment';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-main-page',
@@ -35,9 +36,6 @@ export class MainPageComponent implements OnInit {
   distance = 0;
 
   buildMap() {
-
-
-
 
     const navControl = new mapboxgl.NavigationControl({
       visualizePitch: true
@@ -80,6 +78,8 @@ export class MainPageComponent implements OnInit {
     this.map.addControl(geolocate);
 
     navigator.geolocation.getCurrentPosition(success, error);
+
+
   }
 
   testLocUpdate() {
@@ -87,29 +87,26 @@ export class MainPageComponent implements OnInit {
     let updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point=[];
 
     console.log(initial);
-    
-
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
       updatearr = [crd.longitude, crd.latitude];
       console.log(updatearr);
       console.log(typeof updatearr);
-    }
 
+    }
     function error(err: { code: any; message: any; }) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
 
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
-      
       this.distanceTraveled += turf.distance(initial, updatearr, {
         units: 'kilometers'
       });
       initial = updatearr;
       console.log(initial);
       console.log(this.distanceTraveled);
-    }, 5000)
+    }, 500)
   }
 
   addMarker(this: any) {
@@ -157,4 +154,8 @@ export class MainPageComponent implements OnInit {
 }
 
 
+
+function testLocUpdate() {
+  throw new Error('Function not implemented.');
+}
 
