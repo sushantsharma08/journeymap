@@ -32,7 +32,6 @@ export class MainPageComponent implements OnInit {
 
   to = [];
   from: any = [];
-  updatearr: any = [];
   distance = 0;
 
   buildMap() {
@@ -79,19 +78,22 @@ export class MainPageComponent implements OnInit {
       showUserHeading: true,
     })
     this.map.addControl(geolocate);
+
     navigator.geolocation.getCurrentPosition(success, error);
   }
 
   testLocUpdate() {
+    let initial = this.from;
+    let updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point=[];
+
+    console.log(initial);
+    
+
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
-      console.log('Your current position is:');
-      console.log(`Latitude : ${crd.latitude}`);
-      console.log(`Longitude: ${crd.longitude}`);
-      console.log(`More or less ${crd.accuracy} meters.`);
-      this.updatearr = [crd.longitude, crd.latitude]
-      console.log(this.updatearr);
-      console.log(typeof this.updatearr);
+      updatearr = [crd.longitude, crd.latitude];
+      console.log(updatearr);
+      console.log(typeof updatearr);
     }
 
     function error(err: { code: any; message: any; }) {
@@ -100,15 +102,14 @@ export class MainPageComponent implements OnInit {
 
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
-      this.distanceTraveled = turf.distance(this.from, this.updatearr, {
+      
+      this.distanceTraveled += turf.distance(initial, updatearr, {
         units: 'kilometers'
       });
+      initial = updatearr;
+      console.log(initial);
       console.log(this.distanceTraveled);
-      
-    }, 500)
-
-    console.log(`chalra hai`);
-    
+    }, 5000)
   }
 
   addMarker(this: any) {
@@ -128,8 +129,6 @@ export class MainPageComponent implements OnInit {
       console.log(this.loc);
     })
   }
-
-
 
   viewDist(this: any) {
 
