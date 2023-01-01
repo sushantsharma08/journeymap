@@ -48,6 +48,7 @@ export class MainPageComponent implements OnInit {
     const navControl = new mapboxgl.NavigationControl({
       visualizePitch: true
     });
+
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
 
@@ -73,6 +74,10 @@ export class MainPageComponent implements OnInit {
       zoom: this.zoom, // starting zoom
       attributionControl: false
     });
+    const source = new mapboxgl.Marker({ color: '', draggable: true }).setLngLat([this.lat, this.lng]).addTo(this.map);
+    var lnglat = source.getLngLat();
+    console.log(`long: ${lnglat.lng}, latti: ${lnglat.lat}`);
+
 
     this.map.addControl(navControl, 'top-right');
 
@@ -94,6 +99,7 @@ export class MainPageComponent implements OnInit {
   }
 
   testLocUpdate() {
+    console.log(this.from);
 
     this.initial = this.from;
     console.log(this.initial);
@@ -120,30 +126,37 @@ export class MainPageComponent implements OnInit {
   }
 
   addMarker(this: any) {
-    this.map.on('mousemove', (e: { lngLat: { toArray: () => any; }; }) => {
-      this.loc = e.lngLat.toArray();
-      // console.log(this.loc);
-
-    });
     this.map.once('click', (e: { lngLat: { toArray: () => any; }; }) => {
+      this.loc = e.lngLat.toArray();
       const marker = new mapboxgl.Marker({
         color: "red",
-        draggable: false
+        draggable: true
       })
         .setLngLat(this.loc)
         .addTo(this.map);
+
+      var lnglat = marker.getLngLat();
+      this.loc = [lnglat.lng, lnglat.lat]
+
       this.to = this.loc;
       console.log(this.loc);
-    })
+    });
   }
 
   viewDist(this: any) {
 
     var greenMarker = new mapboxgl.Marker({
-      color: 'green'
+      color: 'green',draggable:true
     })
       .setLngLat(this.to) // marker position using variable 'to'
       .addTo(this.map); //add marker to map
+      const onDragEnd = () => {
+        var lnglat = greenMarker.getLngLat();
+        this.loc = [lnglat.lng, lnglat.lat]
+        this.to = this.loc;
+        calcDist()
+      }
+      greenMarker.on('dragend', onDragEnd)
 
     var purpleMarker = new mapboxgl.Marker({
       color: 'purple'
@@ -152,13 +165,12 @@ export class MainPageComponent implements OnInit {
       .addTo(this.map); //add marker to map
 
     // units can be degrees, radians, miles, or kilometers, just be sure to change the units in the text box to match. 
-
-    this.distance = turf.distance(this.to, this.from, {
-      units: 'kilometers'
-    });
-    console.log(this.to);
-    console.log(this.from);
-    console.log(this.distance);
+    const calcDist = () =>{
+      this.distance = turf.distance(this.to, this.from, {
+        units: 'kilometers'
+      });
+    }
+    calcDist();
   }
 
   changeTheme() {
