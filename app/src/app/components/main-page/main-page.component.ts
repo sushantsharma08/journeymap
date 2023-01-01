@@ -1,5 +1,5 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl'
 import * as turf from '@turf/turf';
 import { NavigationControl } from 'mapbox-gl';
@@ -12,6 +12,12 @@ import { map } from 'rxjs';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
+
+  @ViewChild('screen')
+  screen!: ElementRef;
+
+  theme = "Light"
+
   loc: object | undefined;
   map: mapboxgl.Map | undefined;
   style = 'mapbox://styles/mapbox/streets-v12';
@@ -22,8 +28,8 @@ export class MainPageComponent implements OnInit {
     units: 'miles'
   };
   distanceTraveled = 0;
-   initial: any ;
-   updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point = [];
+  initial: any;
+  updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point = [];
 
   constructor() {
     (mapboxgl as any).accessToken = environment.mapbox.accessToken;
@@ -80,16 +86,16 @@ export class MainPageComponent implements OnInit {
     this.map.addControl(geolocate);
 
     navigator.geolocation.getCurrentPosition(success, error)
-    // geolocate.on('geolocate',()=>{
-    //   console.log(`geolocate clicked`);
+    geolocate.on('geolocate', () => {
+      console.log(`geolocate clicked`);
 
 
-    // })
+    })
   }
 
   testLocUpdate() {
 
-    this.initial=this.from;
+    this.initial = this.from;
     console.log(this.initial);
 
     const success = (pos: { coords: any; }) => {
@@ -155,11 +161,16 @@ export class MainPageComponent implements OnInit {
     console.log(this.distance);
   }
 
+  changeTheme() {
+
+    if (this.theme === 'Light') {
+      this.theme = "dark"
+      this.screen.nativeElement.style.backgroundColor = "#21222d";
+      this.screen.nativeElement.style.color = "#b8b8b8";
+    } else {
+      this.theme = 'Light'
+      this.screen.nativeElement.style.backgroundColor = "White";
+      this.screen.nativeElement.style.color = "black";
+    }
+  }
 }
-
-
-
-function testLocUpdate() {
-  throw new Error('Function not implemented.');
-}
-

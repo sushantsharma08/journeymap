@@ -1,40 +1,77 @@
 <script src='https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css' rel='stylesheet' />
 
-<section class="screen">
+<section class="screen" #screen>
     <div class="head">
         <span class="heading">Angular Map-Box</span>
         <div>This project lets the user know the distance between them and their destination</div>
+        <span class="theme" (click)="changeTheme()">{{theme}}</span>
     </div>
+
+
     <div class="main">
         <div id='map' class="map-container"></div>
     </div>
+
+
     <div class="foot">
         <div class="howTo">
-            <span><h3>How to Use</h3></span>
-            <div> 
+            <span>
+                <h3>How to Use</h3>
+            </span>
+            <br>
+            <div style="display: flex; justify-content: center;">
                 <ul>
+                   <u> <span class="useheading">TO find distance between you and your destination</span></u>
                     <li>Click on the GeoLocate icon in the tools</li>
                     <li>Move to your Desired location on map and then click on "Add Marker"</li>
                     <li>Now on the click the loction you want your marker on</li>
-                    <li>Then click on the "View Distance" button to see the distance between you and your destination</li>
+                    <li>Then click on the "View Distance" button to see the distance between you and your destination
+                    </li>
+                    <br>
+                   <u><span class="useheading">To track Distance Travelled</span></u> 
+                    <li>Just click on track me!</li>
                 </ul>
             </div>
         </div>
-        <div class="buttons" style="display: flex; justify-content: space-evenly;">
+
+        <hr>
+
+        <div class="buttons" style="display: flex; justify-content: space-evenly;margin-top: 15px;margin-bottom: 10px;">
             <button (click)="addMarker()">Add Marker</button>
             <button (click)="viewDist()">View Distance</button>
             <button (click)="testLocUpdate()">Track me</button>
         </div>
     </div>
-    <div><span>Marker Coordinates : </span> [{{loc}}]</div>
-    <div class="dist" *ngIf="distance">
-        <span style="display: flex; align-items: baseline;"><h1>Distance:</h1>{{distance}}Km</span>
+
+
+    <hr>
+
+
+    <div class="extras"
+        style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 15px;text-align: left;">
+        <div><span>Marker Coordinates : </span> [{{loc}}]</div>
+
+        <!-- distace btw marker and current loc -->
+        <span class="dist" *ngIf="distance">
+            <span style="display: flex; align-items: baseline;">
+                <h1>Distance:</h1>{{distance}}Km
+            </span>
+        </span>
+
+        <!-- distance travelled -->
+        <span style="display: flex; align-items: baseline;">
+            <h1>Distance travelled:</h1>{{distanceTraveled}}Km
+        </span>
+
+        <!-- coordinates of journey -->
+        <span class="coords">
+            starting coordinates: {{initial}}
+            <br>
+            current coordinates: {{updatearr}}
+        </span>
+
     </div>
-    <span style="display: flex; align-items: baseline;"><h1>Distance:</h1>{{distanceTraveled}}Km</span>
-    <div class="coords">
-        starting coordinates: {{initial}}
-        <br>
-        current coordinates: {{updatearr}}
-    </div>
+
+
 </section>

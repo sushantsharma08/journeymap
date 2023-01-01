@@ -1,38 +1,76 @@
-.head{
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.screen {
+    min-height: 100vh;
+}
+
+.head {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     font-size: larger;
+    position: relative;
 }
-.heading{
+
+.theme {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0.5rem 1rem;
+    border: 1px solid gray;
+    cursor: pointer;
+}
+
+.heading {
     font-size: xx-large;
     margin: 15px;
 }
+
 #map {
     height: 400px;
     width: 70%;
 }
-.main{
+
+.main {
     display: flex;
     align-items: center;
     justify-content: center;
     padding-top: 40px;
 }
-.foot{
+
+.foot {
     display: relative;
     justify-content: space-evenly;
     align-items: center;
 }
-.howTo{
-    span{
+
+.howTo {
+    span {
         text-align: center;
     }
+
     text-align: left;
 }
-@media screen and (max-width:700px){
-    #map{
+.useheading{
+    font-size: large;
+    font-weight: 600;
+    font-style: italic;
+}
+button {
+    background-color: rgba(114, 95, 131, 0.411);
+    border: 1px solid rgba(66, 42, 42, 0.26);
+    outline: none;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+@media screen and (max-width:700px) {
+    #map {
         width: 99%;
     }
 }
