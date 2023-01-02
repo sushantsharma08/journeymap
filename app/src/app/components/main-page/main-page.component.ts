@@ -18,7 +18,7 @@ export class MainPageComponent implements OnInit {
   screen!: ElementRef;
 
   theme = "Light"
-
+  i=1;
   loc: object | undefined;
   map!: mapboxgl.Map;
   style = 'mapbox://styles/mapbox/streets-v12';
@@ -31,6 +31,7 @@ export class MainPageComponent implements OnInit {
   distanceTraveled = 0;
   initial: any;
   updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point = [];
+  marker: any;
 
   constructor() {
     (mapboxgl as any).accessToken = environment.mapbox.accessToken;
@@ -136,59 +137,61 @@ export class MainPageComponent implements OnInit {
     function error(err: { code: any; message: any; }) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
-    this.map.addSource('trackerline', {
-      type: 'geojson',
-      data: {
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates: [this.from, [0,0]]
-        }
 
-      }
-    })
-    this.map.addLayer({
-      id: 'trackerline',
-      type:'circle',
-      source: 'trackerline',
-      layout: {
-        // "line-cap": 'round',
-        // "line-join": 'round'
-      },
-      paint: {
-        "circle-color":'red',
-        "circle-radius":8
-        // "line-color": 'red',
-        // "line-width": 4
-      }
-    })
 
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
       this.distanceTraveled = turf.distance(this.initial, this.updatearr, {
         units: 'kilometers'
       });
-      // this.map.on('load', () => {
+        this.map.addSource(`${this.i}`, {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: [this.to, this.from,]
+            }
 
-      // })
-      console.log(this.updatearr);
-      console.log(this.initial);
-      console.log(this.distanceTraveled);
+          }
+        })
+        this.map.addLayer({
+          id: `${this.i}`,
+          type: 'line',
+          source: `${this.i}`,
+          layout: {
+            "line-cap": 'round',
+            "line-join": 'round'
+          },
+          paint: {
+            "line-color": 'black',
+            "line-width": 2
+          }
+        })
+        this.i++;
+        
+        console.log(this.updatearr);
+        console.log(this.initial);
+        console.log(this.distanceTraveled);
+      
+
     }, 500)
+
+
   }
 
   addMarker(this: any) {
     this.map.once('click', (e: { lngLat: { toArray: () => any; }; }) => {
       this.loc = e.lngLat.toArray();
-      const marker = new mapboxgl.Marker({
+      this.marker = new mapboxgl.Marker({
         color: "red",
         draggable: true
       })
         .setLngLat(this.loc)
         .addTo(this.map);
 
-      var lnglat = marker.getLngLat();
+      var lnglat = this.marker.getLngLat();
       this.loc = [lnglat.lng, lnglat.lat]
 
       this.to = this.loc;
@@ -213,18 +216,18 @@ export class MainPageComponent implements OnInit {
     }
     greenMarker.on('dragend', onDragEnd)
 
-    var purpleMarker = new mapboxgl.Marker({
-      color: 'purple'
-    })
-      .setLngLat(this.from) // marker position using variable 'from'
-      .addTo(this.map); //add marker to map
+    // var purpleMarker = new mapboxgl.Marker({
+    //   color: 'purple'
+    // })
+    //   .setLngLat(this.from) // marker position using variable 'from'
+    //   .addTo(this.map); //add marker to map
 
     const calcDist = () => {
       this.distance = turf.distance(this.to, this.from, {
         units: 'kilometers'
       });
     }
-    const createLine=()=>{
+    const createLine = () => {
       this.map.addSource('line', {
         type: 'geojson',
         data: {
@@ -234,12 +237,12 @@ export class MainPageComponent implements OnInit {
             type: 'LineString',
             coordinates: [this.to, this.from,]
           }
-  
+
         }
       })
       this.map.addLayer({
         id: 'line',
-        type:'line',
+        type: 'line',
         source: 'line',
         layout: {
           "line-cap": 'round',
@@ -251,10 +254,11 @@ export class MainPageComponent implements OnInit {
         }
       })
     }
-    const removeLine=()=>{
+    const removeLine = () => {
       this.map.removeLayer('line')
       this.map.removeSource('line')
     }
+    this.marker.remove();
     calcDist();
     createLine();
   }
