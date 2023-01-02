@@ -74,34 +74,34 @@ export class MainPageComponent implements OnInit {
     var lnglat = source.getLngLat();
     console.log(`long: ${lnglat.lng}, latti: ${lnglat.lat}`)
 
-    this.map.on('load', () => {
+    // this.map.on('load', () => {
 
-      this.map.addSource('source1', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: [[0, 0], [1, 1]]
-          }
+    //   this.map.addSource('source1', {
+    //     type: 'geojson',
+    //     data: {
+    //       type: 'Feature',
+    //       properties: {},
+    //       geometry: {
+    //         type: 'LineString',
+    //         coordinates: [[0, 0], [1, 1]]
+    //       }
 
-        }
-      })
-      this.map.addLayer({
-        id: 'source1',
-        type: 'line',
-        source: 'source1',
-        layout: {
-          "line-cap": 'round',
-          "line-join": 'round'
-        },
-        paint: {
-          "line-color": 'green',
-          "line-width": 8
-        }
-      })
-    })
+    //     }
+    //   })
+    //   this.map.addLayer({
+    //     id: 'source1',
+    //     type: 'line',
+    //     source: 'source1',
+    //     layout: {
+    //       "line-cap": 'round',
+    //       "line-join": 'round'
+    //     },
+    //     paint: {
+    //       "line-color": 'green',
+    //       "line-width": 8
+    //     }
+    //   })
+    // })
     this.map.addControl(navControl, 'top-right');
 
     const geolocate = new mapboxgl.GeolocateControl({
@@ -136,40 +136,42 @@ export class MainPageComponent implements OnInit {
     function error(err: { code: any; message: any; }) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
+    this.map.addSource('trackerline', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'LineString',
+          coordinates: [this.from, [0,0]]
+        }
+
+      }
+    })
+    this.map.addLayer({
+      id: 'trackerline',
+      type:'circle',
+      source: 'trackerline',
+      layout: {
+        // "line-cap": 'round',
+        // "line-join": 'round'
+      },
+      paint: {
+        "circle-color":'red',
+        "circle-radius":8
+        // "line-color": 'red',
+        // "line-width": 4
+      }
+    })
 
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
       this.distanceTraveled = turf.distance(this.initial, this.updatearr, {
         units: 'kilometers'
       });
-      this.map.on('load', () => {
+      // this.map.on('load', () => {
 
-        this.map.addSource('source1', {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: [this.initial, this.updatearr]
-            }
-  
-          }
-        })
-        this.map.addLayer({
-          id: 'source1',
-          type: 'line',
-          source: 'source1',
-          layout: {
-            "line-cap": 'round',
-            "line-join": 'round'
-          },
-          paint: {
-            "line-color": 'green',
-            "line-width": 8
-          }
-        })
-      })
+      // })
       console.log(this.updatearr);
       console.log(this.initial);
       console.log(this.distanceTraveled);
@@ -205,7 +207,9 @@ export class MainPageComponent implements OnInit {
       var lnglat = greenMarker.getLngLat();
       this.loc = [lnglat.lng, lnglat.lat]
       this.to = this.loc;
-      calcDist()
+      calcDist();
+      removeLine();
+      createLine();
     }
     greenMarker.on('dragend', onDragEnd)
 
@@ -215,13 +219,44 @@ export class MainPageComponent implements OnInit {
       .setLngLat(this.from) // marker position using variable 'from'
       .addTo(this.map); //add marker to map
 
-    // units can be degrees, radians, miles, or kilometers, just be sure to change the units in the text box to match. 
     const calcDist = () => {
       this.distance = turf.distance(this.to, this.from, {
         units: 'kilometers'
       });
     }
+    const createLine=()=>{
+      this.map.addSource('line', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: [this.to, this.from,]
+          }
+  
+        }
+      })
+      this.map.addLayer({
+        id: 'line',
+        type:'line',
+        source: 'line',
+        layout: {
+          "line-cap": 'round',
+          "line-join": 'round'
+        },
+        paint: {
+          "line-color": 'black',
+          "line-width": 2
+        }
+      })
+    }
+    const removeLine=()=>{
+      this.map.removeLayer('line')
+      this.map.removeSource('line')
+    }
     calcDist();
+    createLine();
   }
 
   changeTheme() {
