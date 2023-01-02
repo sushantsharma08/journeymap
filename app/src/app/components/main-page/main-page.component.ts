@@ -117,8 +117,7 @@ export class MainPageComponent implements OnInit {
     navigator.geolocation.getCurrentPosition(success, error)
     geolocate.on('geolocate', () => {
       console.log(`geolocate clicked`);
-
-
+      
     })
   }
 
@@ -137,7 +136,36 @@ export class MainPageComponent implements OnInit {
     function error(err: { code: any; message: any; }) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
+    
+    this.map.flyTo({
+      center:this.initial,
+      zoom:10
+    })
 
+    // create a circle
+      this.map.addSource('source1', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Point',
+            coordinates: this.initial
+          }
+
+        }
+      })
+      this.map.addLayer({
+        id: 'source1',
+        type: 'circle',
+        source: 'source1',
+        layout: {
+        },
+        paint: {
+          "circle-color":'red',
+          "circle-radius":8
+        }
+      })
 
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
@@ -166,7 +194,7 @@ export class MainPageComponent implements OnInit {
           },
           paint: {
             "line-color": 'black',
-            "line-width": 2
+            "line-width": 8
           }
         })
         this.i++;
