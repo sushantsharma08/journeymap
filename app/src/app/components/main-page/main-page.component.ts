@@ -5,6 +5,7 @@ import * as turf from '@turf/turf';
 import { NavigationControl } from 'mapbox-gl';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs';
+import { feature } from '@turf/turf';
 
 @Component({
   selector: 'app-main-page',
@@ -19,7 +20,7 @@ export class MainPageComponent implements OnInit {
   theme = "Light"
 
   loc: object | undefined;
-  map: mapboxgl.Map | undefined;
+  map!: mapboxgl.Map;
   style = 'mapbox://styles/mapbox/streets-v12';
   lat = 12;
   lng = 12;
@@ -51,11 +52,6 @@ export class MainPageComponent implements OnInit {
 
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
-
-      // console.log('Your current position is:');
-      // console.log(`Latitude : ${crd.latitude}`);
-      // console.log(`Longitude: ${crd.longitude}`);
-      // console.log(`More or less ${crd.accuracy} meters.`);
       this.from.length = 0;
       this.from = [crd.longitude, crd.latitude]
       console.log(this.from);
@@ -76,9 +72,36 @@ export class MainPageComponent implements OnInit {
     });
     const source = new mapboxgl.Marker({ color: '', draggable: true }).setLngLat([this.lat, this.lng]).addTo(this.map);
     var lnglat = source.getLngLat();
-    console.log(`long: ${lnglat.lng}, latti: ${lnglat.lat}`);
+    console.log(`long: ${lnglat.lng}, latti: ${lnglat.lat}`)
 
+    this.map.on('load', () => {
 
+      this.map.addSource('source1', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: [[0, 0], [1, 1]]
+          }
+
+        }
+      })
+      this.map.addLayer({
+        id: 'source1',
+        type: 'line',
+        source: 'source1',
+        layout: {
+          "line-cap": 'round',
+          "line-join": 'round'
+        },
+        paint: {
+          "line-color": 'green',
+          "line-width": 8
+        }
+      })
+    })
     this.map.addControl(navControl, 'top-right');
 
     const geolocate = new mapboxgl.GeolocateControl({
@@ -119,6 +142,34 @@ export class MainPageComponent implements OnInit {
       this.distanceTraveled = turf.distance(this.initial, this.updatearr, {
         units: 'kilometers'
       });
+      this.map.on('load', () => {
+
+        this.map.addSource('source1', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: [this.initial, this.updatearr]
+            }
+  
+          }
+        })
+        this.map.addLayer({
+          id: 'source1',
+          type: 'line',
+          source: 'source1',
+          layout: {
+            "line-cap": 'round',
+            "line-join": 'round'
+          },
+          paint: {
+            "line-color": 'green',
+            "line-width": 8
+          }
+        })
+      })
       console.log(this.updatearr);
       console.log(this.initial);
       console.log(this.distanceTraveled);
@@ -146,17 +197,17 @@ export class MainPageComponent implements OnInit {
   viewDist(this: any) {
 
     var greenMarker = new mapboxgl.Marker({
-      color: 'green',draggable:true
+      color: 'green', draggable: true
     })
       .setLngLat(this.to) // marker position using variable 'to'
       .addTo(this.map); //add marker to map
-      const onDragEnd = () => {
-        var lnglat = greenMarker.getLngLat();
-        this.loc = [lnglat.lng, lnglat.lat]
-        this.to = this.loc;
-        calcDist()
-      }
-      greenMarker.on('dragend', onDragEnd)
+    const onDragEnd = () => {
+      var lnglat = greenMarker.getLngLat();
+      this.loc = [lnglat.lng, lnglat.lat]
+      this.to = this.loc;
+      calcDist()
+    }
+    greenMarker.on('dragend', onDragEnd)
 
     var purpleMarker = new mapboxgl.Marker({
       color: 'purple'
@@ -165,7 +216,7 @@ export class MainPageComponent implements OnInit {
       .addTo(this.map); //add marker to map
 
     // units can be degrees, radians, miles, or kilometers, just be sure to change the units in the text box to match. 
-    const calcDist = () =>{
+    const calcDist = () => {
       this.distance = turf.distance(this.to, this.from, {
         units: 'kilometers'
       });
@@ -185,4 +236,5 @@ export class MainPageComponent implements OnInit {
       this.screen.nativeElement.style.color = "black";
     }
   }
+
 }
