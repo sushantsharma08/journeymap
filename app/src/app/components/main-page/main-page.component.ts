@@ -169,7 +169,7 @@ export class MainPageComponent implements OnInit {
       })
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
-      this.distanceTraveled = turf.distance(this.initial, this.updatearr, {
+      this.distanceTraveled += turf.distance(this.initial, this.updatearr, {
         units: 'kilometers'
       });
         this.map.addSource(`${this.i}`, {
