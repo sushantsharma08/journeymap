@@ -205,7 +205,7 @@ export class MainPageComponent implements OnInit {
       console.log(this.distanceTraveled);
 
 
-    }, 500)
+    }, 5000)
 
 
   }
