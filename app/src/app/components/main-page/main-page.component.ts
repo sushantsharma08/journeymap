@@ -18,7 +18,7 @@ export class MainPageComponent implements OnInit {
   screen!: ElementRef;
 
   theme = "Light"
-  i=1;
+  i = 1;
   loc: object | undefined;
   map!: mapboxgl.Map;
   style = 'mapbox://styles/mapbox/streets-v12';
@@ -56,7 +56,7 @@ export class MainPageComponent implements OnInit {
       this.from.length = 0;
       this.from = [crd.longitude, crd.latitude]
       console.log(this.from);
-
+      this.initial = this.from;
     }
 
     function error(err: { code: any; message: any; }) {
@@ -115,94 +115,95 @@ export class MainPageComponent implements OnInit {
     this.map.addControl(geolocate);
 
     navigator.geolocation.getCurrentPosition(success, error)
+
     geolocate.on('geolocate', () => {
       console.log(`geolocate clicked`);
-      
     })
   }
 
   testLocUpdate() {
-    console.log(this.from);
-
-    this.initial = this.from;
     console.log(this.initial);
 
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
       this.updatearr = [crd.longitude, crd.latitude];
-      this.initial=this.updatearr;
-      console.log(typeof this.updatearr);
     }
 
     function error(err: { code: any; message: any; }) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
-    
+
     this.map.flyTo({
-      center:this.initial,
-      zoom:10
+      center: this.initial,
+      zoom: 10
     })
 
-    // create a circle
-      this.map.addSource('source1', {
+    // create a point
+    this.map.addSource('source1', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Point',
+          coordinates: this.initial
+        }
+
+      }
+    })
+    this.map.addLayer({
+      id: 'source1',
+      type: 'circle',
+      source: 'source1',
+      layout: {
+      },
+      paint: {
+        "circle-color": 'red',
+        "circle-radius": 8
+      }
+    })
+
+    setInterval(() => {
+      navigator.geolocation.getCurrentPosition(success, error);
+
+      this.distanceTraveled += turf.distance(this.initial, this.updatearr, {
+        units: 'kilometers'
+      });
+
+      // add a line
+
+      this.map.addSource(`${this.i}`, {
         type: 'geojson',
         data: {
           type: 'Feature',
           properties: {},
           geometry: {
-            type: 'Point',
-            coordinates: this.initial
+            type: 'LineString',
+            coordinates: [this.initial, this.updatearr]
           }
 
         }
       })
       this.map.addLayer({
-        id: 'source1',
-        type: 'circle',
-        source: 'source1',
+        id: `${this.i}`,
+        type: 'line',
+        source: `${this.i}`,
         layout: {
+          "line-cap": 'round',
+          "line-join": 'round'
         },
         paint: {
-          "circle-color":'red',
-          "circle-radius":8
+          "line-color": 'black',
+          "line-width": 8
         }
       })
-    setInterval(() => {
-      navigator.geolocation.getCurrentPosition(success, error);
-      this.distanceTraveled += turf.distance(this.initial, this.updatearr, {
-        units: 'kilometers'
-      });
-        this.map.addSource(`${this.i}`, {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: [this.initial,this.updatearr]
-            }
 
-          }
-        })
-        this.map.addLayer({
-          id: `${this.i}`,
-          type: 'line',
-          source: `${this.i}`,
-          layout: {
-            "line-cap": 'round',
-            "line-join": 'round'
-          },
-          paint: {
-            "line-color": 'black',
-            "line-width": 8
-          }
-        })
-        this.i++;
-        
-        console.log(this.updatearr);
-        console.log(this.initial);
-        console.log(this.distanceTraveled);
-      
+      this.i++;
+      this.initial=this.updatearr;
+      console.log(this.updatearr);
+      console.log(this.initial);
+      console.log(this.distanceTraveled);
+
 
     }, 500)
 
