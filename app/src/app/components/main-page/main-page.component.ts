@@ -179,7 +179,7 @@ export class MainPageComponent implements OnInit {
             properties: {},
             geometry: {
               type: 'LineString',
-              coordinates: [this.to, this.from,]
+              coordinates: [this.initial,this.updatearr]
             }
 
           }
