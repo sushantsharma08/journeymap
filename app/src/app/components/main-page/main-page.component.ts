@@ -130,6 +130,7 @@ export class MainPageComponent implements OnInit {
     const success = (pos: { coords: any; }) => {
       const crd = pos.coords;
       this.updatearr = [crd.longitude, crd.latitude];
+      this.initial=this.updatearr;
       console.log(typeof this.updatearr);
     }
 
@@ -166,7 +167,6 @@ export class MainPageComponent implements OnInit {
           "circle-radius":8
         }
       })
-
     setInterval(() => {
       navigator.geolocation.getCurrentPosition(success, error);
       this.distanceTraveled = turf.distance(this.initial, this.updatearr, {
