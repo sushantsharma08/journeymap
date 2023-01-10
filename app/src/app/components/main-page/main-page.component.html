@@ -16,21 +16,29 @@
 
     <div class="foot">
         <div class="howTo">
-            <span>
-                <h3>How to Use</h3>
-            </span>
+              <div style="position: relative;">
+                <span>
+                    <h3>How to Use</h3>
+                </span>
+                <span (click)="Toggle()" class="img" style="position:absolute; top: 5px; right: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg></span>
+              </div>
             <br>
-            <div style="display: flex; justify-content: center;">
+            <div *ngIf="!instHidden" class="instuctions" style="display: flex; justify-content: center;">
                 <ul>
-                   <u> <span class="useheading">TO find distance between you and your destination</span></u>
+                    <u> <span class="useheading">TO find distance between you and your destination</span></u>
                     <li>Click on the GeoLocate icon in the tools</li>
                     <li>Move to your Desired location on map and then click on "Add Marker"</li>
                     <li>Now on the click the loction you want your marker on</li>
                     <li>Then click on the "View Distance" button to see the distance between you and your destination
                     </li>
                     <br>
-                   <u><span class="useheading">To track Distance Travelled</span></u> 
-                    <li>Just click on track me!</li>
+                    <u><span class="useheading">To track Distance Travelled</span></u>
+                    <li>Click on track me!</li>
+                    <li>Then click the geolocate Icon</li>
                 </ul>
             </div>
         </div>
@@ -47,31 +55,40 @@
 
     <hr>
 
+    <div class="extras" style="display: flex; justify-content: center ; min-width: 100%;">
+        <div style="
+        
+         justify-content: center; align-items: center;  margin-top: 15px;text-align: left; ">
 
-    <div class="extras"
-        style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-top: 15px;text-align: left;">
-        <div><span>Marker Coordinates : </span> [{{loc}}]</div>
+            <div>
+                <!-- distace btw marker and current loc -->
+                <span class="dist" *ngIf="distance">
+                    <span style="display: flex; align-items: baseline;">
+                        <h1>Distance:</h1>{{distance}}Km
+                    </span>
+                </span>
+                <span>Marker Coordinates : </span> [{{loc}}]
 
-        <!-- distace btw marker and current loc -->
-        <span class="dist" *ngIf="distance">
-            <span style="display: flex; align-items: baseline;">
-                <h1>Distance:</h1>{{distance}}Km
-            </span>
-        </span>
+            </div>
 
-        <!-- distance travelled -->
-        <span style="display: flex; align-items: baseline;">
-            <h1>Distance travelled:</h1>{{distanceTraveled}}Km
-        </span>
+            <div>
+                <!-- distance travelled -->
+                <span class="travelledTittle" style="display: flex; align-items: baseline;">
+                    <h1>Distance travelled:</h1>{{distanceTraveled}}Km
+                </span>
 
-        <!-- coordinates of journey -->
-        <span class="coords">
-            starting coordinates: {{initial}}
-            <br>
-            current coordinates: {{updatearr}}
-        </span>
+                <!-- coordinates of journey -->
+                <span class="coords">
+                    starting coordinates: {{initial}}
+                    <br>
+                    current coordinates: {{updatearr}}
+                </span>
+            </div>
 
+
+        </div>
     </div>
+
 
 
 </section>
