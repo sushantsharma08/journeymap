@@ -44,9 +44,9 @@
 }
 
 .foot {
+    margin-top: 10px;
+    
     display: relative;
-    justify-content: space-evenly;
-    align-items: center;
 }
 
 .howTo {
@@ -68,9 +68,32 @@ button {
     padding: 2px 5px;
     cursor: pointer;
 }
+.instuctions{
+    margin-inline: 2rem;
+}
 
 @media screen and (max-width:700px) {
     #map {
         width: 99%;
     }
+}
+@media screen and (max-width:550px) {
+    .extras{
+        margin-inline: 7px;
+    }
+    .travelledTittle h1{
+        font-size: 16px;
+    }
+}
+@media screen and (max-width:460px) {
+    .extras{
+        margin-inline: 3px;
+        font-size: 14px;
+    }
+    .travelledTittle h1{
+        font-size: 16px;
+    }
+}
+@media screen and (max-width:420px) {
+
 }

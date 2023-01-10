@@ -32,6 +32,10 @@ export class MainPageComponent implements OnInit {
   initial: any;
   updatearr: any[] | turf.helpers.Feature<turf.helpers.Point, turf.helpers.Properties> | turf.helpers.Point = [];
   marker: any;
+  to = [];
+  from: any = [];
+  distance = 0;
+  instHidden=false;
 
   constructor() {
     (mapboxgl as any).accessToken = environment.mapbox.accessToken;
@@ -41,9 +45,18 @@ export class MainPageComponent implements OnInit {
     this.buildMap()
   }
 
-  to = [];
-  from: any = [];
-  distance = 0;
+
+  Toggle(){
+    if (this.instHidden===false) {
+      this.instHidden=true
+    } else {
+      this.instHidden=false
+    }
+    console.log(this.instHidden);
+    
+  }
+
+
 
   buildMap() {
 
