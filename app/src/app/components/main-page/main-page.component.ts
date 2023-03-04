@@ -35,7 +35,7 @@ export class MainPageComponent implements OnInit {
   to = [];
   from: any = [];
   distance = 0;
-  instHidden=false;
+  instHidden = false;
 
   constructor() {
     (mapboxgl as any).accessToken = environment.mapbox.accessToken;
@@ -46,14 +46,14 @@ export class MainPageComponent implements OnInit {
   }
 
 
-  Toggle(){
-    if (this.instHidden===false) {
-      this.instHidden=true
+  Toggle() {
+    if (this.instHidden === false) {
+      this.instHidden = true
     } else {
-      this.instHidden=false
+      this.instHidden = false
     }
     console.log(this.instHidden);
-    
+
   }
 
 
@@ -128,10 +128,10 @@ export class MainPageComponent implements OnInit {
     this.map.addControl(geolocate);
 
     navigator.geolocation.getCurrentPosition(success, error)
-
+    
     geolocate.on('geolocate', () => {
       console.log(`geolocate clicked`);
-    })
+    })    
   }
 
   testLocUpdate() {
@@ -212,7 +212,7 @@ export class MainPageComponent implements OnInit {
       })
 
       this.i++;
-      this.initial=this.updatearr;
+      this.initial = this.updatearr;
       console.log(this.updatearr);
       console.log(this.initial);
       console.log(this.distanceTraveled);
